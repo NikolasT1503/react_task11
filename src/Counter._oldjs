@@ -1,0 +1,80 @@
+import React, { useDebugValue, useReducer } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { createStore, combineReducers } from "redux";
+
+const INC = "INC";
+const DEC = "DEC";
+
+/* const reducer = (state, action) => {
+  switch (action.type) {
+    case INC: {
+      return { ...state, counter: state.counter + 1 };
+    }
+    case DEC: {
+      return { ...state, counter: state.counter - 1 };
+    }
+    default:
+      throw new Error();
+  }
+}; */
+const initState = { counter: 0 };
+
+/* const useMyReducer = () => {
+    const [state, dispatch] = useReducer(reducer, initState);
+    useDebugValue("наш супер редьюсер")
+    return {
+        state,
+        dispatch,
+        INC,
+        DEC
+    }
+} */
+
+const reducer = (state = initState, action) => {
+  switch (action.type) {
+    case INC: {return {...state, count: state.counter+action.payload}}
+    case DEC: {return {...state, count: state.counter-action.payload}}
+    default: return state
+  }
+}
+
+const actionInc = (count) => ({type: INC, payload: count})
+const actionDec = (count) => ({type: DEC, payload: count})
+
+const counterReducer = combineReducers({
+  counterReducer: reducer, 
+})
+
+const selectCount = (state) => state.counterReducer.count;
+
+const counterStore = createStore(counterReducer);
+
+const Counter = () => {
+  /* const [counter, setCounter] = useState(0); */
+    /* const myReducerWithConst = useMyReducer(); */
+  const count = useSelector(selectCount);
+
+  const dispatch = useDispatch();
+
+  return (
+    <>
+      <button
+        onClick={() => {
+            dispatch(actionInc(1));
+        }}
+      >
+        -
+      </button>
+      {count}
+      <button
+        onClick={() => {
+            dispatch(actionDec(1));
+        }}
+      >
+        +
+      </button>
+    </>
+  );
+};
+
+export default Counter;
